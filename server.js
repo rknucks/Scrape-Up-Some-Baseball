@@ -64,7 +64,7 @@ app.get('/', (req, res) => {
 // A GET route for scraping the website
 app.get("/scrape", function(req, res) {
     // First, we grab the body of the html with axios
-    axios.get("http://www.mlb.com/").then(function(response) {
+    axios.get("https://www.mlb.com/news").then(function(response) {
       // Then, we load that into cheerio and save it to $ for a shorthand selector
       var $ = cheerio.load(response.data);
   
@@ -73,9 +73,10 @@ app.get("/scrape", function(req, res) {
         // Save an empty result object
         var result = {};
   
-        result.title = $(this).find("div.u-text-h4 u-text-flow").text().trim();
-            result.link = $(this).attr('href');
-            result.image = $(this).find("img").attr("src");
+        result.title = $(this).find("h1.article-item__headline").text().trim();
+            result.link = $(this).find("div.p-share p-share-- article-item__share.data-link").text().trim();
+            result.summary = $(this).find("div.article-item__preview").text().trim();
+            result.image = $(this).find("img.lazyautosizes lazyload--loaded").attr("srcset");
             
 
             
@@ -99,20 +100,7 @@ app.get("/scrape", function(req, res) {
         .catch(err => {
             res.redirect('/');
             throw err;
-            // console.log(err.message);
-            // console.log(typeof err.message);
-            // let dupTitle = err.message.split('\"');
-            // console.log(dupTitle[1]);
-            // if (err.message.includes('E11000')) {
-            //     // console.log('yo');
-            //     models.Article.find({ title: dupTitle[1] })
-            //     .then(dbArticle => {
-            //         if (dbArticle) console.log(dbArticle);
-            //     })
-            //     .catch(err => {
-            //         console.log(err);
-            //     });
-            // }
+           
         });
 
     })
