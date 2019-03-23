@@ -79,7 +79,7 @@ app.get("/scrape", function(req, res) {
             
 
             
-            resultArr.push(result);
+            console.log(result);
 
            // result.title = $(this).find("div.u-text-h4 u-text-flow").text().trim();
       //  result.link = $(this).find("a.tease-headline").attr("href");
@@ -89,7 +89,7 @@ app.get("/scrape", function(req, res) {
        
         });
 
-        console.log(result);
+        //console.log(result);
         
         models.Article.insertMany(resultArr)
         .then(newArticles => {
@@ -120,9 +120,8 @@ app.get("/scrape", function(req, res) {
         res.send(err);
     });
 
-    // THIS WILL CONSOLE OUT 0 BECAUSE THE AXIOS GET REQUEST IS ASYNCHRONOUS!!!
-    console.log('resultArr length 2:');
-    console.log(resultArr.length);
+    
+    
 });
 
 app.get('/saved', (req, res) => {
