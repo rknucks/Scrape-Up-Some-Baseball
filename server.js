@@ -8,7 +8,7 @@ const request = require('request')
 const mongoose = require('mongoose');
 
 // set port
-const PORT = 3000;
+const port = process.env.PORT || 3000;
 
 // require all models
 const models = require('./models');
@@ -51,8 +51,17 @@ mongoose.connect(MONGODB_URI)
 });
 
 // Routes
+app.get('/', (req, res) => {
+    models.Article.find({})
+    .then(dbArticles => {
+        res.render('index', { articles: dbArticles });
+    })
+    .catch(err => {
+        console.log(err);
+    });
+});
 
-// A GET route for scraping the echoJS website
+// A GET route for scraping the website
 app.get("/scrape", function(req, res) {
     // First, we grab the body of the html with axios
     axios.get("http://www.mlb.com/").then(function(response) {
@@ -181,6 +190,6 @@ app.get('/api/clear', (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, function() {
-    console.log("App running on port " + PORT + "!");
-  });
+app.listen(port, () => {
+    console.log(`App running on port ${port}`);
+});
