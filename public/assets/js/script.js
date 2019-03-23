@@ -11,7 +11,7 @@ $(() => {
         axios.get('/scrape')
         .then(response => {
             console.log('scrape successful');
-            // window.location.href = '/';
+            
         })
         .catch(err => {
             console.error(err);
@@ -158,13 +158,3 @@ $(() => {
 
 });
 
-// $(window).unload(function() {
-//     localStorage.removeItem('hasShownModal');
-//     axios.get('/api/clear')
-//     .then(response => {
-//         console.log(response);
-//     })
-//     .catch(err => {
-//         console.error(err);
-//     });
-// });

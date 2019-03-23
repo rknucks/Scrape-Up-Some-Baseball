@@ -40,11 +40,11 @@ body, html {
 **/
 
 #scrape-btn {
-    background: #58c7c7;
+    background: red;
 }
 
 #scrape-btn:hover {
-    background: #53bbbb;
+    background: #5355bb;
 }
 
 /** ** MAIN **/
