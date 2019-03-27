@@ -48,14 +48,14 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3>
-                <a href="{{this.link}}" target="_blank" class="article-link">{{this.title}}</a>
+                <a href="https://www.mlb.com" + {{this.link}} target="_blank" class="article-link">{{this.title}}</a>
             </h3>
             <button type="button" class="btn btn-default view-note-btn" data-id="{{this._id}}" data-toggle="modal" data-target="#viewNoteModal">View Comment</button>
             <button type="button" class="btn btn-default unsave-btn" data-id="{{this._id}}" data-toggle="modal" data-target="#unsaveModal">Unsave</button>
         </div>
         <div class="panel-body">
             <p>Source:
-                <a href="https://{{this.site}}" target="_blank">{{this.site}}</a>
+                <a href="https://www.mlb.com"  + {{this.link}} target="_blank">{{this.site}}</a>
             </p>
         </div>
     </div>

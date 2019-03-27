@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 const port = process.env.PORT || 3000;
 
 // require all models
-const models = require('./models');
+const db = require('./models');
 
 
 // MIDDLEWARE
@@ -52,7 +52,7 @@ mongoose.connect(MONGODB_URI)
 
 // Routes
 app.get('/', (req, res) => {
-    models.Article.find({})
+    db.Article.find({})
     .then(dbArticles => {
         res.render('index', { articles: dbArticles });
     })
@@ -67,53 +67,38 @@ app.get("/scrape", function(req, res) {
     axios.get("https://www.mlb.com/news").then(function(response) {
       // Then, we load that into cheerio and save it to $ for a shorthand selector
       var $ = cheerio.load(response.data);
-  
+
+
+    // console.log(response)
+
       // Now, we grab every h2 within an article tag, and do the following:
-      $("div.u-text-h4 u-text-flow").each(function(i, element) {
+      $("article").each(function(i, element) {
         // Save an empty result object
         var result = {};
-  
-        result.title = $(this).find("h1.article-item__headline").text().trim();
-            result.link = $(this).find("div.p-share p-share-- article-item__share.data-link").text().trim();
-            result.summary = $(this).find("div.article-item__preview").text().trim();
-            result.image = $(this).find("img.lazyautosizes lazyload--loaded").attr("srcset");
-            
-
-            
-            console.log(result);
-
-           // result.title = $(this).find("div.u-text-h4 u-text-flow").text().trim();
-      //  result.link = $(this).find("a.tease-headline").attr("href");
-       // result.summary = $(this).find("div.tease-summary").text().trim();
-       // result.image = $(this).find("img").attr("src");
-
-       
-        });
-
-        //console.log(result);
         
-        models.Article.insertMany(resultArr)
+
+        result.title = $(this).find("h1").text().trim();
+        result.link = $(this).find("a").attr("href")
+        result.summary = $(this).find("div.article-item__preview").text().trim();
+
+        
+        db.Article.create(result)
         .then(newArticles => {
             console.log('scrape complete!');
+            console.log(newArticles)
             res.redirect('/');
         })
         .catch(err => {
-            res.redirect('/');
             throw err;
-           
         });
 
-    })
-    .catch(err => {
-        res.send(err);
     });
-
     
-    
+});
 });
 
 app.get('/saved', (req, res) => {
-    models.Article.find({ saved: true })
+    db.Article.find({ saved: true })
     .then(savedArticles => {
         res.render('saved', { articles: savedArticles });
     })
@@ -124,7 +109,7 @@ app.get('/saved', (req, res) => {
 
 app.get('/api/articles/:id', (req, res) => {
     id = req.params.id;
-    models.Article.findOneAndUpdate({ _id: id }, { saved: true }, { new: true })
+    db.Article.findOneAndUpdate({ _id: id }, { saved: true }, { new: true })
     .populate('note')
     .then(dbArticle => {
         res.send(dbArticle);
@@ -136,10 +121,10 @@ app.get('/api/articles/:id', (req, res) => {
 
 app.post('/api/articles/:id', (req, res) => {
     id = req.params.id;
-    models.Note.create(req.body)
+    db.Note.create(req.body)
     .then(newNote => {
         console.log(newNote);
-        return models.Article.findOneAndUpdate({ _id: id }, { note: newNote._id }, { new: true });
+        return db.Article.findOneAndUpdate({ _id: id }, { note: newNote._id }, { new: true });
     })
     .then(updatedArticle => {
         res.send(updatedArticle);
@@ -151,7 +136,7 @@ app.post('/api/articles/:id', (req, res) => {
 
 app.get('/api/unsave/:id', (req, res) => {
     id = req.params.id;
-    models.Article.findOneAndUpdate({ _id: id }, { $unset: { note: '', saved: '' }}, { new: true })
+    db.Article.findOneAndUpdate({ _id: id }, { $unset: { note: '', saved: '' }}, { new: true })
     .then(unsavedArticle => {
         console.log(`article ${unsavedArticle._id} saved: ${unsavedArticle.saved}`);
         res.send(unsavedArticle);
@@ -162,9 +147,9 @@ app.get('/api/unsave/:id', (req, res) => {
 });
 
 app.get('/api/clear', (req, res) => {
-    models.Article.remove({})
+    db.Article.remove({})
     .then(articleResponse => {
-       return models.Note.remove({});
+       return db.Note.remove({});
     })
     .then(noteResponse => {
         console.log('articles & notes removed!');

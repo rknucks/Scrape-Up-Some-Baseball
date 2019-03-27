@@ -7,23 +7,19 @@ const ArticleSchema = new Schema({
         unique: {
             index: { unique: true }
         },
-        required: true
     },
     link: {
         type: String,
         unique: true,
-        required: true
     },
-    site: {
+    summary: {
         type: String
     },
+    
     saved: {
         type: Boolean
     },
-    // points: {
-    //     type: Number,
-    //     required: true
-    // },
+   
     note: {
         type: Schema.Types.ObjectId,
         ref: 'Note'
